@@ -1,0 +1,75 @@
+<main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-10 flex flex-col items-center text-center">
+        <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white">Catálogo Completo</h2>
+        <div class="h-1 w-20 bg-primary mt-4"></div>
+    </div>
+
+    <div class="flex gap-3 mb-10 overflow-x-auto no-scrollbar pb-2 justify-center">
+        <button
+            class="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest border border-primary">Todo</button>
+        <button
+            class="px-6 py-2 bg-transparent text-slate-400 text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-primary hover:text-primary transition-all">Sudaderas</button>
+        <button
+            class="px-6 py-2 bg-transparent text-slate-400 text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-primary hover:text-primary transition-all">Camisetas</button>
+        <button
+            class="px-6 py-2 bg-transparent text-slate-400 text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-primary hover:text-primary transition-all">Accesorios</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
+
+        @for (product of products; track product._id) {
+        <div class="group flex flex-col">
+            <div
+                class="relative aspect-[3/4] overflow-hidden bg-neutral-900 mb-4 border border-white/5 group-hover:border-primary/50 transition-colors">
+                <img [src]="product.imagen" [alt]="product.nombre"
+                    class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-105" />
+
+                @if (product.stock < 10) { <div
+                    class="absolute top-4 left-4 bg-primary text-white text-[10px] font-black px-2 py-1 uppercase tracking-tighter">
+                    Últimas piezas
+            </div>
+            }
+        </div>
+        <div class="flex flex-col gap-1">
+            <h3
+                class="text-lg font-bold uppercase tracking-tight text-white group-hover:text-primary transition-colors">
+                {{ product.nombre }}</h3>
+            <div class="flex justify-between items-end">
+                <div class="flex flex-col">
+                    <span class="text-primary font-bold text-xl">${{ product.precio }} MXN</span>
+                    <span class="text-xs text-slate-500 uppercase font-medium">{{ product.talla }} | {{ product.color
+                        }}</span>
+                </div>
+                <button
+                    class="flex items-center justify-center bg-primary hover:bg-primary/80 text-white p-3 transition-transform active:scale-95">
+                    <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    } @empty {
+    <div class="col-span-full flex flex-col items-center justify-center py-20 border-2 border-dashed border-white/10">
+        <span class="material-symbols-outlined text-6xl text-slate-600 mb-4">inventory_2</span>
+        <p class="text-slate-500 uppercase tracking-widest font-bold text-center">El catálogo se está
+            actualizando.<br>Vuelve más tarde.</p>
+    </div>
+    }
+
+    </div>
+
+    <div class="flex items-center justify-center mt-16 gap-2">
+        <button
+            class="w-10 h-10 flex items-center justify-center border border-white/10 hover:border-primary transition-colors group">
+            <span class="material-symbols-outlined text-slate-400 group-hover:text-primary">chevron_left</span>
+        </button>
+        <button class="w-10 h-10 flex items-center justify-center bg-primary text-white text-xs font-bold">1</button>
+        <button
+            class="w-10 h-10 flex items-center justify-center border border-white/10 hover:border-primary transition-colors text-slate-400 text-xs font-bold">2</button>
+        <button
+            class="w-10 h-10 flex items-center justify-center border border-white/10 hover:border-primary transition-colors text-slate-400 text-xs font-bold">3</button>
+        <button
+            class="w-10 h-10 flex items-center justify-center border border-white/10 hover:border-primary transition-colors group">
+            <span class="material-symbols-outlined text-slate-400 group-hover:text-primary">chevron_right</span>
+        </button>
+    </div>
+</main>

@@ -1,0 +1,40 @@
+<div class="flex min-h-[calc(100vh-80px)] bg-black font-['Space_Grotesk'] text-white selection:bg-primary selection:text-white">
+    <aside class="bg-[#0a0a0a] uppercase tracking-widest text-sm w-64 border-r-4 border-primary flex flex-col p-4 hidden md:flex">
+        <div class="mb-8 mt-4">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-12 h-12 border-2 border-primary p-0.5">
+                    <img class="w-full h-full object-cover grayscale" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000" />
+                </div>
+                <div>
+                    <p class="text-white font-black text-lg leading-tight">UNDERGROUND</p>
+                    <p class="text-primary text-[10px] font-bold">ELITE MEMBER</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex flex-col gap-2">
+            <a routerLink="/perfil/datos" routerLinkActive="bg-primary text-black translate-x-1" class="text-zinc-500 hover:text-white hover:bg-zinc-900 font-black italic flex items-center gap-3 px-4 py-3 transition-all duration-200 cursor-pointer">
+                <span class="material-symbols-outlined">person</span>
+                <span>Mi Perfil</span>
+            </a>
+            <a routerLink="/perfil/pedidos" routerLinkActive="bg-primary text-black translate-x-1" class="text-zinc-500 hover:text-white hover:bg-zinc-900 font-black italic flex items-center gap-3 px-4 py-3 transition-all duration-200 cursor-pointer">
+                <span class="material-symbols-outlined">package_2</span>
+                <span>Mis Pedidos</span>
+            </a>
+            <a routerLink="/perfil/seguridad" routerLinkActive="bg-primary text-black translate-x-1" class="text-zinc-500 hover:text-white hover:bg-zinc-900 font-black italic flex items-center gap-3 px-4 py-3 transition-all duration-200 cursor-pointer">
+                <span class="material-symbols-outlined">shield</span>
+                <span>Seguridad</span>
+            </a>
+            <a class="text-zinc-500 hover:text-white hover:bg-zinc-900 flex items-center gap-3 px-4 py-3 transition-all duration-200 mt-auto border-t border-zinc-800 pt-4 cursor-pointer" routerLink="/">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Cerrar Sesión</span>
+            </a>
+        </nav>
+        <button class="mt-8 bg-white text-black font-black py-3 text-xs tracking-[0.2em] hover:bg-primary hover:text-white transition-colors" routerLink="/catalogo">
+            GO TO SHOP
+        </button>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-12">
+        <router-outlet></router-outlet>
+    </main>
+</div>
