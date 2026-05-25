@@ -40,7 +40,7 @@ const crearOrden = async (req = request, res = response ) => {
         };
 
         const orden = new Orden(data);
-        await orden.save(); // ¡Ahora Mongoose sí tiene todo lo que exige!
+        await orden.save(); 
 
         res.status(201).json({
             msg: '¡Orden de Rage Core creada con éxito!',

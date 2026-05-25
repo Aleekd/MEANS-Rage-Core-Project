@@ -18,7 +18,7 @@ export class HeaderComponent {
   public cartItemCount: number = 0;
 
   ngOnInit() {
-    // Escuchamos el carrito todo el tiempo
+    
     this.cartService.cart$.subscribe(items => {
       // Sumamos la cantidad de todas las prendas
       this.cartItemCount = items.reduce((total, item) => total + item.cantidad, 0);

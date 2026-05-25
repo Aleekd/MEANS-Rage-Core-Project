@@ -107,7 +107,7 @@ export class ProductosComponent implements OnInit {
         .subscribe({
           next: () => {
             this.mostrarNotificacion('PRODUCTO ACTUALIZADO', 'success');
-            this.router.navigate(['/admin/inventario']); // Lo regresamos al inventario
+            this.router.navigate(['/admin/inventario']); 
           },
           error: (err) => {
             this.mostrarNotificacion('ERROR AL ACTUALIZAR EL PRODUCTO', 'error');

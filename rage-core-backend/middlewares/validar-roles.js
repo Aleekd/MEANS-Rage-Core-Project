@@ -1,6 +1,6 @@
 const { response, request} = require('express');
 
-// 🛡️ CADENERO NIVEL 1: Acceso Absoluto 
+// CADENERO NIVEL 1: Acceso Absoluto 
 const esAdminRole = (req = request, res = response, next ) => {
     if (!req.usuarioAutenticado) {
         return res.status(500).json({ msg: 'Se quiere verificar el rol sin validar el token primero' });

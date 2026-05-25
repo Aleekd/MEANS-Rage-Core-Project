@@ -41,7 +41,6 @@ export class SeguridadComponent {
 
     this.http.put(`${this.apiUrl}/${id}/seguridad`, payload, { headers }).subscribe({
       next: (res: any) => {
-        // Si todo sale bien, limpiamos formulario y mostramos éxito
         this.passwords = { actual: '', nueva: '' };
         this.mostrarError = false;
         this.mostrarModalExito = true;

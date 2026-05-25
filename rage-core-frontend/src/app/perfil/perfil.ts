@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
-import { AuthService } from '../services/auth'; // Asegúrate de que la ruta sea la correcta
+import { AuthService } from '../services/auth'; 
 
 @Component({
   selector: 'app-perfil',

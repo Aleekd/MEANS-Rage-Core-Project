@@ -26,7 +26,7 @@ export class CheckoutComponent implements OnInit {
   private cartService = inject(CartService);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private http = inject(HttpClient); // Para enviar la orden directo a Node.js
+  private http = inject(HttpClient); 
 
   ngOnInit() {
     // 1. CORTAFUEGOS: Si por algún motivo llegó aquí sin loguearse, lo pateamos al login

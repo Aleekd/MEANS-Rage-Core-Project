@@ -39,10 +39,10 @@ export class ContentComponent implements OnInit {
 
   // NUEVO: Esta función une el host de Node con el nombre de tu foto
   obtenerImagen(imagen: string): string {
-    if (!imagen) return 'assets/placeholder.jpg'; // Por si algún producto no tiene foto
-    if (imagen.startsWith('http')) return imagen; // Por si pusiste un link de internet directo
+    if (!imagen) return 'assets/placeholder.jpg'; 
+    if (imagen.startsWith('http')) return imagen;
     
-    return `http://localhost:8080/${imagen}`; // Conecta con Node.js
+    return `http://localhost:8080/${imagen}`; 
   }
 
   abrirModal(producto: any) {
@@ -61,7 +61,7 @@ export class ContentComponent implements OnInit {
 
   agregarAlCarrito(producto: any, event?: Event) {
     if (event) {
-      event.stopPropagation(); // Evita que se abra el modal si le damos clic en la tarjeta
+      event.stopPropagation(); 
     }
     
   

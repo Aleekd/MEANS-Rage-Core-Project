@@ -53,5 +53,5 @@ export const routes: Routes = [
     ]
   },
   
-  { path: '**', redirectTo: '' } // Rutas no definidas
+  { path: '**', redirectTo: '' } 
 ];
