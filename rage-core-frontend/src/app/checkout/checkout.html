@@ -1,0 +1,36 @@
+<main class="max-w-4xl mx-auto py-12 px-4 select-none">
+    <div class="mb-10 text-center">
+        <h2 class="text-4xl font-black uppercase tracking-tighter text-white italic">Finalizar Despliegue</h2>
+        <p class="text-primary font-bold text-xs tracking-[0.3em] mt-2 uppercase">Configuración de Envío y Pago</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div class="space-y-6">
+            <h3 class="text-white font-black uppercase tracking-widest text-sm border-b border-white/10 pb-2">1. Dirección de Entrega</h3>
+            <div class="space-y-4">
+                <input type="text" [(ngModel)]="direccion.calle" placeholder="CALLE Y NÚMERO" class="w-full bg-[#0a0a0a] border border-white/10 p-4 text-xs font-bold text-white outline-none focus:border-primary uppercase">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" [(ngModel)]="direccion.cp" placeholder="CP" class="bg-[#0a0a0a] border border-white/10 p-4 text-xs font-bold text-white outline-none focus:border-primary uppercase">
+                    <input type="text" [(ngModel)]="direccion.ciudad" placeholder="CIUDAD" class="bg-[#0a0a0a] border border-white/10 p-4 text-xs font-bold text-white outline-none focus:border-primary uppercase">
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-[#0a0a0a] border border-white/10 p-8 h-fit">
+            <h3 class="text-white font-black uppercase tracking-widest text-sm mb-6">Resumen Final</h3>
+            <div class="flex justify-between text-white/60 text-xs font-bold uppercase mb-4">
+                <span>Total de Activos</span>
+                <span class="text-white">${{ total }} MXN</span>
+            </div>
+            <div class="flex justify-between text-primary text-xl font-black border-t border-white/10 pt-4 mb-8">
+                <span>TOTAL</span>
+                <span>${{ total }} MXN</span>
+            </div>
+
+            <button (click)="finalizarOrden()" class="w-full bg-primary hover:bg-white hover:text-black text-white font-black uppercase py-5 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">payments</span>
+                Confirmar y Pagar
+            </button>
+        </div>
+    </div>
+</main>

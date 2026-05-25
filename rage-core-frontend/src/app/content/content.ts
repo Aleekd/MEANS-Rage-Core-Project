@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { ProductService } from '../services/product';
 import { Product } from '../interfaces/product.interface'; 
+import { CartService } from '../services/cart';
 
 @Component({
   selector: 'app-content',
@@ -11,21 +12,67 @@ import { Product } from '../interfaces/product.interface';
 })
 export class ContentComponent implements OnInit {
   public products: Product[] = []; 
+  private productService = inject(ProductService);
+  private cdr = inject(ChangeDetectorRef);
+  private cartService = inject(CartService);
 
-  constructor(private productService: ProductService) {}
+  // --- Estado del Modal de Vista Rápida ---
+  public productoSeleccionado: any = null;
+  public modalVisible: boolean = false;
 
   ngOnInit(): void {
-    // Cuando el componente carga, pedimos los productos al backend
+    // Pedimos los productos al backend público
     this.productService.getProducts().subscribe({
       next: (response: any) => { 
-        const ropaExtraida = response.productos?.productos || response.productos || response;
-
-        this.products = ropaExtraida;
-        console.log("Lista real de Rage Core", this.products);
+        // Aseguramos la ruta correcta del arreglo (suele venir en response.productos)
+        this.products = response.productos || [];
+        console.log("🔥 Arsenal de Rage Core cargado:", this.products);
+        
+        // ¡Forzamos a la pantalla a repintarse!
+        this.cdr.detectChanges();
       },
       error: (error: any) => {
-        console.error("No se pudieron cargar los productos", error);
+        console.error("Radar desconectado. No se conectó al backend.", error);
       }
     });
+  }
+
+  // NUEVO: Esta función une el host de Node con el nombre de tu foto
+  obtenerImagen(imagen: string): string {
+    if (!imagen) return 'assets/placeholder.jpg'; // Por si algún producto no tiene foto
+    if (imagen.startsWith('http')) return imagen; // Por si pusiste un link de internet directo
+    
+    return `http://localhost:8080/${imagen}`; // Conecta con Node.js
+  }
+
+  abrirModal(producto: any) {
+    this.productoSeleccionado = producto;
+    this.modalVisible = true;
+    // Bloqueamos el scroll del fondo
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarModal() {
+    this.modalVisible = false;
+    // Devolvemos el scroll
+    document.body.style.overflow = 'auto';
+    setTimeout(() => this.productoSeleccionado = null, 300);
+  }
+
+  agregarAlCarrito(producto: any, event?: Event) {
+    if (event) {
+      event.stopPropagation(); // Evita que se abra el modal si le damos clic en la tarjeta
+    }
+    
+  
+    this.cartService.agregar(producto, 1, producto.talla, producto.color);
+    
+  
+    if (this.modalVisible) {
+      this.cerrarModal();
+    }
+    
+    
+    console.log("¡Arma agregada al arsenal!");
   }
 }

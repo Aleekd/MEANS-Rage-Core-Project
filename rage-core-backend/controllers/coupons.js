@@ -36,7 +36,60 @@ const crearCupon = async (req = request, res = response) => {
     });
 };
 
+const actualizarCupon = async (req = request, res = response) => {
+    const { id } = req.params;
+    const { _id, ...resto } = req.body;
+
+    if (resto.codigo) {
+        resto.codigo = resto.codigo.toUpperCase();
+    }
+
+    try {
+        const cuponActualizado = await Coupon.findByIdAndUpdate(id, resto, { new: true });
+        res.status(200).json({ msg: 'Cupón actualizado', cupon: cuponActualizado });
+    } catch (error) {
+        res.status(500).json({ msg: 'Error al actualizar el cupón' });
+    }
+};
+
+
+const eliminarCupon = async (req = request, res = response) => {
+    const { id } = req.params;
+    try {
+        await Coupon.findByIdAndDelete(id);
+        res.status(200).json({ msg: 'Cupón eliminado del búnker' });
+    } catch (error) {
+        res.status(500).json({ msg: 'Error al eliminar el cupón' });
+    }
+};
+
+const validarCupon = async (req, res) => {
+    const { codigo } = req.params;
+    try {
+        const cupon = await Cupon.findOne({ codigo: codigo.toUpperCase(), estado: true });
+
+        if (!cupon) {
+            return res.status(404).json({ msg: 'CÓDIGO NO ENCONTRADO' });
+        }
+
+        // Verificar si expiró
+        if (new Date(cupon.fechaExpiracion) < new Date()) {
+            return res.status(400).json({ msg: 'EL CUPÓN HA EXPIRADO' });
+        }
+
+        res.json({
+            porcentajeDescuento: cupon.porcentajeDescuento
+        });
+    } catch (error) {
+        res.status(500).json({ msg: 'ERROR EN EL SISTEMA' });
+    }
+};
+
 module.exports = {
     obtenerCupones,
-    crearCupon
+    crearCupon,
+    actualizarCupon,
+    eliminarCupon,
+    validarCupon,
+
 };

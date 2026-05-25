@@ -15,13 +15,13 @@
             <div class="absolute -right-4 -top-4 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-500">
                 <span class="material-symbols-outlined text-[120px]">payments</span>
             </div>
-            <p class="text-[10px] font-bold tracking-widest text-white/40 uppercase mb-4">Ventas Totales (24h)</p>
+            <p class="text-[10px] font-bold tracking-widest text-white/40 uppercase mb-4">Ventas Totales</p>
             <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-black text-white tracking-tighter">$42,890</span>
-                <span class="text-primary text-xs font-bold tracking-tighter">+12.4%</span>
+                <span class="text-4xl font-black text-white tracking-tighter">$ {{ ventasTotales | number:'1.2-2' }}</span>
+                <span class="text-primary text-xs font-bold tracking-tighter">MXN</span>
             </div>
             <div class="mt-4 h-1 w-full bg-white/5">
-                <div class="h-full bg-primary w-3/4 shadow-[0_0_10px_#e60000]"></div>
+                <div class="h-full bg-primary w-full shadow-[0_0_10px_#e60000]"></div>
             </div>
         </div>
 
@@ -31,7 +31,7 @@
             </div>
             <p class="text-[10px] font-bold tracking-widest text-white/40 uppercase mb-4">Pedidos Pendientes</p>
             <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-black text-white tracking-tighter">18</span>
+                <span class="text-4xl font-black text-white tracking-tighter">{{ pedidosPendientes | number:'2.0-0' }}</span>
                 <span class="text-white/20 text-xs font-bold tracking-tighter">Esperando Envío</span>
             </div>
         </div>
@@ -42,8 +42,8 @@
             </div>
             <p class="text-[10px] font-bold tracking-widest text-white/40 uppercase mb-4">Alertas Críticas de Stock</p>
             <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-black text-[#ff4444] tracking-tighter">04</span>
-                <span class="text-[#ff4444]/40 text-xs font-bold tracking-tighter uppercase">SKUs Agotados</span>
+                <span class="text-4xl font-black text-[#ff4444] tracking-tighter">{{ alertasStock | number:'2.0-0' }}</span>
+                <span class="text-[#ff4444]/40 text-xs font-bold tracking-tighter uppercase">SKUs Agotándose</span>
             </div>
         </div>
     </div>
@@ -67,14 +67,34 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5">
+                        @for (orden of ultimasTransacciones; track orden._id) {
                         <tr class="group hover:bg-white/5 transition-colors">
-                            <td class="py-6 px-6 font-mono text-sm text-white/60">#RC-8842</td>
-                            <td class="py-6 px-6 font-bold uppercase tracking-wider text-white">Jaxson Draven</td>
-                            <td class="py-6 px-6 text-sm font-black text-white text-right">$540.00</td>
+                            <td class="py-6 px-6 font-mono text-sm text-white/60">
+                                #RC-{{ orden._id.substring(18, 24) | uppercase }}
+                            </td>
+                            <td class="py-6 px-6 font-bold uppercase tracking-wider text-white">
+                                {{ orden.usuario?.nombre || 'Usuario Eliminado' }}
+                            </td>
+                            <td class="py-6 px-6 text-sm font-black text-white text-right">
+                                $ {{ orden.total | number:'1.2-2' }}
+                            </td>
                             <td class="py-6 px-6">
-                                <span class="px-2 py-1 bg-white/10 text-[10px] font-black uppercase tracking-widest text-white border border-white/10">En Tránsito</span>
+                                <span [ngClass]="{
+                                    'bg-zinc-700': orden.estado === 'Pendiente',
+                                    'bg-green-600': orden.estado === 'Pagado',
+                                    'bg-primary': orden.estado === 'Enviado'
+                                }" class="px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white border border-white/10">
+                                    {{ orden.estado }}
+                                </span>
                             </td>
                         </tr>
+                        } @empty {
+                            <tr>
+                                <td colspan="4" class="py-8 text-center text-white/40 text-xs font-bold tracking-widest uppercase">
+                                    NO HAY TRANSACCIONES EN EL SISTEMA
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -86,24 +106,29 @@
                     Alta Demanda
                     <span class="material-symbols-outlined text-primary">bolt</span>
                 </h4>
+                
                 <div class="space-y-4">
-                    <div class="flex items-center gap-4 group cursor-pointer border-b border-white/5 pb-4">
+                    @for (prod of productosAltaDemanda; track prod.nombre) {
+                    <div class="flex items-center gap-4 group border-b border-white/5 pb-4">
                         <div class="flex-1">
-                            <p class="text-[8px] font-bold text-primary tracking-widest uppercase">24 Ventas / Hoy</p>
+                            <p class="text-white font-bold uppercase tracking-widest text-xs mb-1 group-hover:text-primary transition-colors">
+                                {{ prod.nombre }}
+                            </p>
+                            <p class="text-[8px] font-bold text-zinc-500 tracking-widest uppercase">
+                                {{ prod.cantidadVendida }} Unidades Vendidas
+                            </p>
                         </div>
                         <span class="material-symbols-outlined text-sm text-white/20 group-hover:text-primary transition-colors">trending_up</span>
                     </div>
+                    } @empty {
+                    <div class="py-4 text-center">
+                        <p class="text-[10px] text-white/40 uppercase tracking-widest font-bold">Sin datos de ventas</p>
+                    </div>
+                    }
                 </div>
             </div>
 
-            <div class="bg-primary p-6 relative overflow-hidden group">
-                <div class="relative z-10">
-                    
-                    <div class="mt-6 flex justify-between items-center">
-                        <span class="text-2xl font-black italic tracking-tighter text-white">NOMINAL</span>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<div class="p-10 flex-1 w-full">
+<div class="p-10 flex-1 w-full relative">
     <div class="mb-12 relative">
         <h2 class="text-8xl font-black tracking-tighter uppercase italic leading-none opacity-10 absolute -top-10 -left-4 select-none pointer-events-none text-white">ÓRDENES</h2>
         <div class="flex justify-between items-end relative z-10">
@@ -21,20 +21,116 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
+                @for (orden of ordenes; track orden._id) {
                 <tr class="group hover:bg-white/5 transition-colors">
-                    <td class="py-6 px-8 font-black tracking-tighter text-primary">#RC-8842</td>
-                    <td class="py-6 px-4">
-                        <span class="font-bold tracking-tight text-white">Alejandro Silva</span>
+                    <td class="py-6 px-8 font-black tracking-tighter text-primary">
+                        #RC-{{ orden._id.substring(18, 24) | uppercase }}
                     </td>
-                    <td class="py-6 px-4 font-black text-white">$4,200.00</td>
                     <td class="py-6 px-4">
-                        <span class="bg-primary/20 text-primary px-3 py-1 text-[10px] font-black tracking-widest uppercase">Pagado</span>
+                        <span class="font-bold tracking-tight text-white">{{ orden.usuario?.nombre || 'USUARIO ELIMINADO' }}</span>
+                    </td>
+                    <td class="py-6 px-4 font-black text-white">
+                        $ {{ orden.total | number:'1.2-2' }}
+                    </td>
+                    <td class="py-6 px-4">
+                        <div class="relative w-fit">
+                            <select (change)="cambiarEstatus(orden._id, $event)" [ngClass]="{
+                                'bg-zinc-900 text-zinc-400 border-zinc-800': orden.estado === 'Pendiente',
+                                'bg-green-900/40 text-green-500 border-green-900': orden.estado === 'Pagado',
+                                'bg-blue-900/40 text-blue-500 border-blue-900': orden.estado === 'Procesando',
+                                'bg-primary/20 text-primary border-primary/40': orden.estado === 'Enviado',
+                                'bg-white/20 text-white border-white/20': orden.estado === 'Entregado'
+                            }" class="px-4 py-2 text-[10px] font-black tracking-widest uppercase outline-none border cursor-pointer appearance-none transition-all duration-300">
+                                @for (estado of estadosValidos; track estado) {
+                                <option class="bg-black text-white font-bold" [value]="estado" [selected]="estado === orden.estado">
+                                    {{ estado }}
+                                </option>
+                                }
+                            </select>
+                            <span class="material-symbols-outlined absolute right-1 top-1/2 -translate-y-1/2 text-[12px] pointer-events-none opacity-50">expand_more</span>
+                        </div>
                     </td>
                     <td class="py-6 px-8 text-right">
-                        <button class="bg-white/5 hover:bg-primary text-white text-[10px] font-black uppercase px-4 py-2 transition-all">Ver/Editar</button>
+                        <button (click)="abrirInspeccion(orden)" class="bg-white/5 hover:bg-primary text-white text-[10px] font-black uppercase px-4 py-2 transition-all cursor-pointer">
+                            Ver/Editar
+                        </button>
                     </td>
                 </tr>
+                } @empty {
+                <tr>
+                    <td colspan="5" class="py-12 text-center text-white/20 text-xs font-black tracking-widest uppercase">// NO HAY TRANSACCIONES EN LA BASE DE DATOS</td>
+                </tr>
+                }
             </tbody>
         </table>
     </div>
 </div>
+
+@if (modalDetalleVisible && ordenSeleccionada) {
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+    <div class="relative w-full max-w-4xl bg-[#0a0a0a] border border-white/10 shadow-2xl flex flex-col md:flex-row overflow-hidden">
+        
+        <button (click)="cerrarInspeccion()" class="absolute top-4 right-4 text-white/20 hover:text-white transition-colors z-20 cursor-pointer">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <div class="w-full md:w-1/3 bg-[#111111] p-8 border-r border-white/5">
+            <div class="mb-10">
+                <p class="text-primary font-black text-[9px] tracking-[0.3em] uppercase mb-4">// DESTINATARIO</p>
+                <h4 class="text-white font-black text-2xl tracking-tighter uppercase italic">{{ ordenSeleccionada.usuario?.nombre }}</h4>
+                <p class="text-white/40 font-bold text-[10px] tracking-widest mt-1">{{ ordenSeleccionada.usuario?.correo }}</p>
+            </div>
+
+            <div class="mb-10">
+                <p class="text-white/20 font-black text-[9px] tracking-[0.3em] uppercase mb-4">// COORDENADAS DE ENVÍO</p>
+                <div class="bg-white/5 p-4 border-l-2 border-primary">
+                    <p class="text-white text-xs font-bold leading-relaxed uppercase">{{ ordenSeleccionada.direccion }}</p>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-white/20 font-black text-[9px] tracking-[0.3em] uppercase mb-4">// CONTROL DE ESTADO</p>
+                <select (change)="cambiarEstatus(ordenSeleccionada._id, $event)" 
+                        class="w-full bg-black border border-white/10 p-3 text-white text-[10px] font-black uppercase tracking-widest outline-none focus:border-primary transition-colors">
+                    @for (estado of estadosValidos; track estado) {
+                        <option [value]="estado" [selected]="estado === ordenSeleccionada.estado">{{ estado }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="w-full md:w-2/3 p-8">
+            <div class="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                <h3 class="text-white font-black uppercase italic tracking-tighter text-xl">Manifiesto de Carga</h3>
+                <span class="text-[10px] font-black text-white/20 tracking-widest uppercase">ID: #{{ ordenSeleccionada._id }}</span>
+            </div>
+
+            <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                @for (item of ordenSeleccionada.productos; track item._id) {
+                <div class="flex items-center gap-4 bg-white/[0.02] border border-white/5 p-4 group">
+                    <div class="w-16 h-20 bg-neutral-900 shrink-0 overflow-hidden">
+                        <img [src]="obtenerImagen(item.producto?.imagen)" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                    </div>
+                    <div class="flex-grow">
+                        <h5 class="text-white font-bold uppercase text-xs tracking-wide">{{ item.producto?.nombre }}</h5>
+                        <div class="flex gap-4 mt-2">
+                            <span class="text-[9px] text-white/30 font-black uppercase tracking-widest">Talla: <span class="text-white">{{ item.talla }}</span></span>
+                            <span class="text-[9px] text-white/30 font-black uppercase tracking-widest">Cant: <span class="text-white">{{ item.cantidad }}</span></span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-white font-black text-sm italic">$ {{ (item.producto?.precio * item.cantidad) | number:'1.2-2' }}</p>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
+                <p class="text-white/20 font-black text-[10px] tracking-widest uppercase italic">Inversión Total Recaudada</p>
+                <p class="text-3xl font-black text-primary tracking-tighter italic">$ {{ ordenSeleccionada.total | number:'1.2-2' }} <span class="text-[10px] not-italic opacity-30">MXN</span></p>
+            </div>
+        </div>
+
+    </div>
+</div>
+}

@@ -16,11 +16,13 @@ const userSchema = mongoose.Schema({
     },
     rol: {
         type: String,
-        enum: ['cliente', 'admin'],
+        enum: ['cliente', 'admin', 'staff'],
         default: 'cliente'
     },
     direccion: {
-        type: String
+        calle: { type: String },
+        ciudad: { type: String },
+        codigoPostal: { type: String }
     }
 });
 

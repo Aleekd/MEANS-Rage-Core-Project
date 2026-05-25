@@ -1,7 +1,7 @@
 <section class="mb-16">
     <h1 class="font-black text-5xl md:text-7xl lg:text-8xl italic tracking-tighter leading-none text-white">
         BIENVENIDO AL <span class="text-primary block md:inline">UNDERGROUND,</span><br/>
-        JAXSON DRAVEN
+        {{ usuario.nombre ? (usuario.nombre | uppercase) : 'INICIANDO...' }}
     </h1>
     <div class="h-1 w-32 bg-primary mt-6"></div>
 </section>
@@ -12,43 +12,74 @@
             <span class="text-primary font-black text-xl italic">//</span>
             <h2 class="font-bold text-3xl uppercase tracking-tighter">DATOS PERSONALES</h2>
         </div>
-        <form class="space-y-8 bg-[#141414] p-8 border border-[#333333]">
+        <form class="space-y-8 bg-[#141414] p-8 border border-[#333333]" (ngSubmit)="guardarCambios()">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-2">
                     <label class="text-[10px] uppercase font-black tracking-widest text-zinc-500">Nombre Completo</label>
-                    <input class="w-full bg-transparent border-0 border-b border-[#333333] focus:border-primary focus:ring-0 text-white font-medium p-2 outline-none" type="text" value="Jaxson Draven"/>
+                    <input [(ngModel)]="usuario.nombre" name="nombre" class="w-full bg-transparent border-0 border-b border-[#333333] focus:border-primary focus:ring-0 text-white font-medium p-2 outline-none" type="text" placeholder="Ej. Steven "/>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] uppercase font-black tracking-widest text-zinc-500">Email</label>
-                    <input class="w-full bg-transparent border-0 border-b border-[#333333] focus:border-primary focus:ring-0 text-white font-medium p-2 outline-none" type="email" value="jaxson.draven@obsidian.com"/>
+                    <input [(ngModel)]="usuario.correo" name="correo" class="w-full bg-transparent border-0 border-b border-[#333333] focus:border-primary focus:ring-0 text-white font-medium p-2 outline-none" type="email" placeholder="steven@ragecore.com"/>
                 </div>
             </div>
             <div class="space-y-2">
                 <label class="text-[10px] uppercase font-black tracking-widest text-zinc-500">Dirección de Envío</label>
-                <input class="w-full bg-transparent border-0 border-b border-[#333333] focus:border-primary focus:ring-0 text-white font-medium p-2 outline-none" type="text" value="Calle de la Resistencia 88, Col. Roma Norte"/>
+                <input [(ngModel)]="usuario.direccion" name="direccion" class="w-full bg-transparent border-0 border-b border-[#333333] focus:border-primary focus:ring-0 text-white font-medium p-2 outline-none" type="text" placeholder="Calle, Número, Colonia..."/>
             </div>
-            <button class="w-full bg-primary text-white font-black py-5 uppercase tracking-[0.3em] text-sm hover:bg-white hover:text-black transition-all duration-300 border-b-4 border-red-800 mt-8" type="button">
+            
+            <button class="w-full bg-primary text-white font-black py-5 uppercase tracking-[0.3em] text-sm hover:bg-white hover:text-black transition-all duration-300 border-b-4 border-red-800 mt-8" type="submit">
                 GUARDAR CAMBIOS
             </button>
         </form>
     </div>
 
     <div class="lg:col-span-5">
-        <div class="flex items-center gap-2 mb-8">
-            <span class="text-primary font-black text-xl italic">//</span>
-            <h2 class="font-bold text-3xl uppercase tracking-tighter">ÚLTIMOS PEDIDOS</h2>
-        </div>
-        <div class="space-y-4">
-            <div class="bg-[#141414] border-l-4 border-primary p-6 hover:bg-[#1f1f1f] transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 class="text-white font-black text-lg">#RC-8842</h3>
-                        <p class="text-zinc-500 text-xs uppercase tracking-widest">Octubre 24, 2023</p>
-                    </div>
-                    <span class="bg-primary text-white text-[10px] font-black px-3 py-1 tracking-widest">ENVIADO</span>
+    <div class="flex items-center gap-2 mb-8">
+        <span class="text-primary font-black text-xl italic">//</span>
+        <h2 class="font-bold text-3xl uppercase tracking-tighter">ÚLTIMOS PEDIDOS</h2>
+    </div>
+    <div class="space-y-4">
+        @for (pedido of ultimosPedidos; track pedido._id) {
+        <div class="bg-[#141414] border-l-4 border-primary p-6 hover:bg-[#1f1f1f] transition-all group">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-white font-black text-lg group-hover:text-primary transition-colors">
+                        #RC-{{ pedido._id.substring(18, 24) | uppercase }}
+                    </h3>
+                    <p class="text-zinc-500 text-[10px] uppercase tracking-widest">
+                        {{ pedido.fecha | date:'MMMM dd, yyyy' }}
+                    </p>
                 </div>
-                <p class="text-white font-black text-xl italic text-right">$540.00 MXN</p>
+                <span class="bg-primary text-white text-[8px] font-black px-3 py-1 tracking-widest italic">
+                    {{ pedido.estado | uppercase }}
+                </span>
             </div>
+            <p class="text-white font-black text-xl italic text-right">$ {{ pedido.total | number:'1.2-2' }} MXN</p>
         </div>
+        } @empty {
+            <p class="text-zinc-600 italic text-sm tracking-widest">// NO HAY MOVIMIENTOS REGISTRADOS</p>
+        }
+    </div>
+</div>
+</div>
+
+<div *ngIf="mostrarModalExito" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4 transition-opacity duration-300">
+    <div class="bg-[#141414] border-2 border-primary p-8 max-w-sm w-full shadow-[0_0_40px_rgba(255,0,0,0.15)] text-center relative overflow-hidden animate-fade-in-up">
+        
+        <div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+        
+        <span class="material-symbols-outlined text-primary text-6xl mb-4">check_circle</span>
+        
+        <h3 class="text-white font-black text-3xl uppercase tracking-tighter italic mb-2">
+            DATOS<br>ACTUALIZADOS
+        </h3>
+        <p class="text-zinc-400 text-[10px] uppercase tracking-[0.2em] mb-8 font-bold">
+            El sistema ha registrado tus cambios exitosamente en la base de datos.
+        </p>
+        
+        <button (click)="cerrarModal()" class="w-full bg-white text-black font-black py-4 uppercase tracking-[0.3em] text-xs hover:bg-primary hover:text-white transition-all duration-300 border-b-4 border-zinc-400 hover:border-red-900">
+            CONTINUAR
+        </button>
     </div>
 </div>

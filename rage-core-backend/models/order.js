@@ -15,20 +15,26 @@ const orderSchema = mongoose.Schema({
         cantidad: {
             type: Number,
             required: true
-        }
+        },
+        talla: { type: String, required: true },
+        color: { type: String, required: true }
     }],
     total: {
         type: Number,
         required: true
     },
-    fecha: {
-        type: Date,
-        default: Date.now
+    direccion: {
+        type: String,
+        required: true
     },
     estado: {
         type: String,
-        enum: ['Pendiente', 'Pagado', 'Enviado'],
+        enum: ['Pendiente', 'Pagado', 'Procesando', 'Enviado', 'Entregado'],
         default: 'Pendiente'
+    },
+    fecha: { 
+        type: Date, 
+        default: Date.now 
     }
 });
 

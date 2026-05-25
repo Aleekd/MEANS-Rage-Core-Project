@@ -5,37 +5,43 @@ import { LoginComponent } from './login/login';
 import { AdminComponent } from './admin/admin';
 
 
+// Imports de Administración
 import { DashboardComponent } from './admin/dashboard/dashboard';
 import { OrdenesComponent } from './admin/ordenes/ordenes';
 import { CuponesComponent } from './admin/cupones/cupones';
 import { UsuariosComponent } from './admin/usuarios/usuarios';
 import { ProductosComponent } from './admin/productos/productos';
-
+import { InventarioComponent } from './admin/inventario/inventario'; 
 
 import { PerfilComponent } from './perfil/perfil';
 import { DatosComponent } from './perfil/datos/datos';
 import { PedidosComponent } from './perfil/pedidos/pedidos';
 import { SeguridadComponent } from './perfil/seguridad/seguridad';
-import { Carrito } from './carrito/carrito';
+import { CarritoComponent } from './carrito/carrito';
+
+import { CheckoutComponent } from './checkout/checkout';
 
 export const routes: Routes = [
   { path: '', component: ContentComponent },
   { path: 'catalogo', component: CatalogoComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'carrito', component: Carrito },
+  { path: 'carrito', component: CarritoComponent },
+  { path: 'checkout', component: CheckoutComponent },
   // ÁREA ADMINISTRATIVA (El Cascarón)
   { 
     path: 'admin', 
     component: AdminComponent,
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Si entras a /admin, te manda a /admin/dashboard
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, 
       { path: 'dashboard', component: DashboardComponent },
       { path: 'ordenes', component: OrdenesComponent },
       { path: 'cupones', component: CuponesComponent },
       { path: 'usuarios', component: UsuariosComponent },
-      { path: 'productos', component: ProductosComponent }
+      { path: 'productos', component: ProductosComponent },
+      { path: 'inventario', component: InventarioComponent },
     ]
   },
+  
   { 
     path: 'perfil', 
     component: PerfilComponent,
@@ -47,5 +53,5 @@ export const routes: Routes = [
     ]
   },
   
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: '' } // Rutas no definidas
 ];

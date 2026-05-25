@@ -1,63 +1,131 @@
-<div class="p-8 lg:p-12 max-w-[1600px] mx-auto w-full relative">
-    <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="p-8 lg:p-12 w-full relative">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 relative z-10">
         <div>
-            <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.8] mb-4">
-                Registro<span class="text-primary">.</span>
-            </h1>
-            <p class="text-white/40 max-w-md font-light tracking-wide">Gestionando el pulso de la comunidad Rage Core. Filtra, audita y modifica los niveles de acceso de usuarios.</p>
+            <div class="text-[10px] font-black text-primary tracking-[0.3em] uppercase mb-2 italic">Seguridad</div>
+            <h1 class="text-5xl lg:text-7xl font-black tracking-tighter uppercase leading-none italic">Operarios</h1>
         </div>
-        <button class="bg-primary text-white font-black px-8 py-4 uppercase tracking-tighter hover:skew-x-[-10deg] transition-transform duration-200 flex items-center gap-2">
-            <span class="material-symbols-outlined">person_add</span> Invitar Usuario
+        <button (click)="mostrarFormulario ? resetearFormulario() : mostrarFormulario = true" class="bg-primary text-white font-black uppercase italic py-4 px-10 flex items-center gap-3 self-start hover:bg-primary/80 transition-all outline-none">
+            <span class="material-symbols-outlined">{{ mostrarFormulario ? 'close' : 'person_add' }}</span> 
+            {{ mostrarFormulario ? 'Cancelar' : 'Reclutar' }}
         </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
-        <div class="bg-[#141414] p-6 border-l-4 border-primary">
-            <div class="text-xs uppercase tracking-widest text-white/40 mb-2">Total de Humanos</div>
-            <div class="text-4xl font-black italic">12,402</div>
-        </div>
-        <div class="bg-[#141414] p-6 border-l-4 border-white/20">
-            <div class="text-xs uppercase tracking-widest text-white/40 mb-2">Activos Hoy</div>
-            <div class="text-4xl font-black italic">1,844</div>
-        </div>
+    @if (mostrarFormulario) {
+    <div class="bg-[#141414] border border-white/5 p-8 mb-12 shadow-[0_0_30px_rgba(255,0,0,0.05)]">
+        <h3 class="text-2xl font-black uppercase italic mb-6 text-white tracking-tighter">
+            {{ modoEdicion ? 'Actualizar Credenciales' : 'Nuevo Acceso al Sistema' }}
+        </h3>
+        
+        <form (ngSubmit)="guardarUsuario()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+                <label class="block text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Nombre Clave</label>
+                <input [(ngModel)]="nuevoUsuario.nombre" name="nombre" class="w-full bg-[#0a0a0a] border border-white/10 text-white p-4 font-mono outline-none focus:border-primary uppercase transition-colors" placeholder="EJ: ALBERT" type="text" required/>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Correo</label>
+                <input [(ngModel)]="nuevoUsuario.correo" name="correo" class="w-full bg-[#0a0a0a] border border-white/10 text-white p-4 font-mono outline-none focus:border-primary transition-colors" placeholder="operario@ragecore.com" type="email" required/>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Contraseña</label>
+                <input [(ngModel)]="nuevoUsuario.password" name="password" class="w-full bg-[#0a0a0a] border border-white/10 text-white p-4 font-mono outline-none focus:border-primary transition-colors" type="password" [placeholder]="modoEdicion ? 'Dejar en blanco para conservar' : '********'"/>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Nivel de Seguridad (Rol)</label>
+                <select [(ngModel)]="nuevoUsuario.rol" name="rol" class="w-full bg-[#0a0a0a] border border-white/10 text-white p-4 font-mono outline-none focus:border-primary transition-colors uppercase">
+                    <option value="staff">Staff (Logística)</option>
+                    <option value="admin">Admin (Control Total)</option>
+                    <option value="cliente">Cliente (Público)</option>
+                </select>
+            </div>
+            <div class="lg:col-span-4 pt-4">
+                <button type="submit" class="w-full md:w-auto bg-white text-black text-xs font-black uppercase tracking-[0.2em] px-12 py-4 hover:bg-primary hover:text-white transition-all">
+                    {{ modoEdicion ? 'ACTUALIZAR OPERARIO' : 'OTORGAR ACCESO' }}
+                </button>
+            </div>
+        </form>
+    </div>
+    }
+
+    <div class="bg-[#0d0d0d] border border-white/5 overflow-hidden relative z-10">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-[#141414] uppercase text-[10px] font-black tracking-widest text-white/40 border-b border-white/5">
+                    <th class="py-6 px-8">Identidad</th>
+                    <th class="py-6 px-4">Contacto</th>
+                    <th class="py-6 px-4">Nivel de Autorización</th>
+                    <th class="py-6 px-8 text-right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                @for (user of usuarios; track user._id) {
+                <tr class="group hover:bg-white/5 transition-colors">
+                    <td class="py-6 px-8 font-black tracking-tighter text-white uppercase text-xl">
+                        {{ user.nombre }}
+                    </td>
+                    <td class="py-6 px-4 font-mono text-white/60 text-xs">
+                        {{ user.correo }}
+                    </td>
+                    <td class="py-6 px-4">
+                        <span [ngClass]="{
+                            'bg-primary text-white': user.rol === 'admin',
+                            'bg-white text-black': user.rol === 'staff',
+                            'bg-zinc-800 text-zinc-400': user.rol === 'cliente' || !user.rol
+                        }" class="px-3 py-1 text-[10px] font-black tracking-widest uppercase">
+                            {{ user.rol || 'CLIENTE' }}
+                        </span>
+                    </td>
+                    <td class="py-6 px-8 text-right flex justify-end gap-2">
+                        <button (click)="editarUsuario(user)" class="bg-white/5 hover:bg-primary text-white text-[10px] font-black uppercase px-4 py-2 transition-all">
+                            <span class="material-symbols-outlined text-sm leading-none">edit</span>
+                        </button>
+                        <button (click)="prepararEliminacion(user._id || user.uid)" class="bg-white/5 hover:bg-red-900 text-white text-[10px] font-black uppercase px-4 py-2 transition-all">
+                            <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                        </button>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="4" class="py-12 text-center text-white/20 text-xs font-black tracking-widest uppercase">
+                        // NO HAY REGISTROS EN LA BASE DE DATOS
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
 
-    <div class="bg-[#141414] overflow-hidden border border-white/5">
-        <div class="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="relative w-full md:w-96">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/40">search</span>
-                <input class="w-full bg-black border-none focus:ring-1 focus:ring-primary py-3 pl-12 pr-4 text-sm font-bold tracking-widest uppercase placeholder:text-white/20 text-white" placeholder="BUSCAR EN EL REGISTRO CORE..." type="text"/>
+    @if (toastVisible) {
+        <div class="fixed bottom-8 right-8 z-[100] animate-bounce">
+            <div class="bg-[#0a0a0a] border border-white/10 p-6 shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center gap-5 relative overflow-hidden min-w-[300px]">
+                <div class="absolute left-0 top-0 bottom-0 w-1" [ngClass]="toastTipo === 'success' ? 'bg-green-500' : 'bg-primary'"></div>
+                <span class="material-symbols-outlined text-3xl" [ngClass]="toastTipo === 'success' ? 'text-green-500' : 'text-primary'">
+                    {{ toastTipo === 'success' ? 'check_circle' : 'warning' }}
+                </span>
+                <div class="flex flex-col">
+                    <span class="text-[9px] font-black uppercase tracking-[0.3em] text-white/40 mb-1">System // {{ toastTipo === 'success' ? 'Status OK' : 'Error' }}</span>
+                    <span class="text-white font-black italic tracking-tighter uppercase text-sm">{{ toastMensaje }}</span>
+                </div>
             </div>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b border-white/10">
-                        <th class="px-8 py-6 text-xs font-black uppercase tracking-widest text-white/40">Identidad</th>
-                        <th class="px-8 py-6 text-xs font-black uppercase tracking-widest text-white/40">Rol</th>
-                        <th class="px-8 py-6 text-xs font-black uppercase tracking-widest text-white/40">Correo</th>
-                        <th class="px-8 py-6 text-xs font-black uppercase tracking-widest text-white/40 text-right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-white/5">
-                    <tr class="hover:bg-white/[0.02] transition-colors group">
-                        <td class="px-8 py-6">
-                            <div class="font-black uppercase tracking-tight group-hover:text-primary transition-colors">Jaxson Vane</div>
-                            <div class="text-[10px] text-white/40 uppercase tracking-widest">ID: 9942-AX</div>
-                        </td>
-                        <td class="px-8 py-6">
-                            <span class="px-3 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest italic">Admin</span>
-                        </td>
-                        <td class="px-8 py-6 font-mono text-sm text-white/60">vane.core@ragecore.io</td>
-                        <td class="px-8 py-6 text-right">
-                            <div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button class="p-2 text-white/40 hover:text-white transition-colors"><span class="material-symbols-outlined text-lg">edit</span></button>
-                                <button class="p-2 text-white/40 hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">delete</span></button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    }
+
+    @if (modalEliminarVisible) {
+        <div class="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div class="bg-[#0a0a0a] border border-red-500/50 p-8 max-w-md w-full shadow-[0_0_50px_rgba(255,0,0,0.15)] transform scale-100 animate-fade-in">
+                <div class="flex items-center gap-4 mb-6 text-red-500">
+                    <span class="material-symbols-outlined text-4xl animate-pulse">security</span>
+                    <h2 class="text-3xl font-black italic tracking-tighter uppercase leading-none">Seguridad</h2>
+                </div>
+                <p class="text-white/60 font-mono text-xs mb-8 uppercase tracking-widest leading-relaxed">
+                    ¿Confirmar revocación de acceso? El operario será <span class="text-red-500 font-bold">expulsado</span> del sistema Rage Core de forma inmediata.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-end gap-4">
+                    <button (click)="cerrarModalEliminar()" class="px-6 py-4 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black tracking-[0.2em] uppercase transition-colors outline-none">Abortar</button>
+                    <button (click)="confirmarEliminacion()" class="px-6 py-4 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black tracking-[0.2em] uppercase transition-colors shadow-[0_0_20px_rgba(220,38,38,0.4)] outline-none flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">gpp_bad</span> Confirmar Expulsión
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
+    }
 </div>

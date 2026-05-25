@@ -1,17 +1,26 @@
-<nav class="sticky top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-md text-white font-['Space_Grotesk']">
+<nav class="sticky top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-md text-white font-['Space_Grotesk'] select-none">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
       
-      <div class="flex items-center gap-2">
-        <h1 class="text-2xl font-black tracking-tighter text-primary italic uppercase cursor-pointer" routerLink="/">RAGE CORE</h1>
-      </div>
-      
-      <div class="hidden md:flex items-center gap-8">
-        <a class="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors cursor-pointer" routerLink="/">Inicio</a>
-        <a class="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors cursor-pointer" routerLink="/catalogo">Catálogo</a>
-        <a class="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors cursor-pointer" href="#">Sudaderas</a>
-        <a class="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors cursor-pointer" href="#">Camisetas</a>
-      </div>
+      <h1 class="text-2xl font-black tracking-tighter text-primary italic uppercase cursor-pointer" 
+    [routerLink]="['/']">RAGE CORE</h1>
+
+<div class="hidden md:flex items-center gap-8">
+    <a class="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors cursor-pointer" 
+       [routerLink]="['/']">Inicio</a>
+    
+    <a class="text-sm font-bold uppercase tracking-widest text-primary hover:text-white transition-colors cursor-pointer flex items-center gap-1" 
+   [routerLink]="['/catalogo']" 
+   [queryParams]="{filtro: 'Drops'}">
+  <span class="material-symbols-outlined text-[16px]">local_fire_department</span> Drops
+</a>
+    
+    <a class="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors cursor-pointer" 
+       [routerLink]="['/catalogo']" [queryParams]="{filtro: 'Camisa'}">Playeras</a>
+       
+    <a class="text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors cursor-pointer" 
+       [routerLink]="['/catalogo']" [queryParams]="{filtro: 'Sudadera'}">Sudaderas</a>
+</div>
       
       <div class="flex items-center gap-2 md:gap-4">
         
@@ -22,13 +31,27 @@
           </button>
         </div>
         
-        <button class="p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer" routerLink="/login">
+        <button *ngIf="!authService.isLoggedIn()" class="p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer" routerLink="/login" title="Iniciar Sesión">
           <span class="material-symbols-outlined">person</span>
         </button>
+
+        <button *ngIf="authService.isLoggedIn() && authService.getRol() === 'cliente'" class="p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer" routerLink="/perfil" title="Mi Perfil">
+          <span class="material-symbols-outlined">account_circle</span>
+        </button>
+
+        <button *ngIf="authService.isLoggedIn() && authService.getRol() === 'admin'" class="p-2 hover:bg-white/10 text-primary rounded-full transition-colors cursor-pointer" routerLink="/admin" title="Command Center">
+          <span class="material-symbols-outlined">terminal</span>
+        </button>
         
-        <button class="relative p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer" routerLink="/carrito">
-          <span class="material-symbols-outlined">shopping_cart</span>
-          <span class="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">2</span>
+        <button *ngIf="!authService.isLoggedIn() || authService.getRol() !== 'admin'" class="relative p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer" routerLink="/carrito">
+    <span class="material-symbols-outlined">shopping_cart</span>
+    @if (cartItemCount > 0) {
+        <span class="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">{{ cartItemCount }}</span>
+    }
+</button>
+
+        <button *ngIf="authService.isLoggedIn()" (click)="cerrarSesion()" class="p-2 text-red-500 hover:bg-red-500/20 rounded-full transition-colors cursor-pointer" title="Cerrar Sesión">
+          <span class="material-symbols-outlined">logout</span>
         </button>
 
       </div>

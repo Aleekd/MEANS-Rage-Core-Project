@@ -1,13 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const { dbConnection } = require('../database/config'); 
+const path = require('path');
 
 class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
 
-        //Conectar a la base de datois
+        // Conectar a la base de datos
         this.conectarDB();
 
         // Middlewares
@@ -24,12 +25,13 @@ class Server {
     middlewares() {
         // CORS
         this.app.use(cors());
+        
         // Parseo del body
         this.app.use(express.json());
+this.app.use(express.static(path.resolve(__dirname, '../uploads/productos')));
     }
 
     routes() {
-        
         this.app.use('/api/users', require('../routes/users'));
         this.app.use('/api/categorias', require('../routes/categories'));
         this.app.use('/api/productos', require('../routes/products'));

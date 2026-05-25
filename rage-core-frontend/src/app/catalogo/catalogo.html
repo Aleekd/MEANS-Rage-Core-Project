@@ -1,75 +1,170 @@
 <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
+
     <div class="mb-10 flex flex-col items-center text-center">
-        <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white">Catálogo Completo</h2>
+        <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white">
+            {{ categoriaActual === 'Todo' ? 'Catálogo Completo' : categoriaActual }}
+        </h2>
         <div class="h-1 w-20 bg-primary mt-4"></div>
     </div>
 
-    <div class="flex gap-3 mb-10 overflow-x-auto no-scrollbar pb-2 justify-center">
-        <button
-            class="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest border border-primary">Todo</button>
-        <button
-            class="px-6 py-2 bg-transparent text-slate-400 text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-primary hover:text-primary transition-all">Sudaderas</button>
-        <button
-            class="px-6 py-2 bg-transparent text-slate-400 text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-primary hover:text-primary transition-all">Camisetas</button>
-        <button
-            class="px-6 py-2 bg-transparent text-slate-400 text-xs font-bold uppercase tracking-widest border border-white/10 hover:border-primary hover:text-primary transition-all">Accesorios</button>
+    <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-y border-white/5 py-8">
+        
+        <div class="relative">
+            <input type="text" (input)="onSearchChange($event)"
+                class="w-full bg-[#0d0d0d] border border-white/10 text-white text-[10px] p-4 font-black tracking-[0.2em] outline-none focus:border-primary uppercase transition-all"
+                placeholder="BUSCAR EN EL SISTEMA...">
+            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-white/20">search</span>
+        </div>
+
+        <div class="flex justify-center gap-4">
+            <button (click)="categoriaActual = 'Drops'; aplicarLogicaGlobal()"
+                [ngClass]="categoriaActual === 'Drops' ? 'text-primary' : 'text-white/40'"
+                class="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors italic flex items-center">
+                <span class="material-symbols-outlined text-[14px] mr-1">local_fire_department</span> Drops
+            </button>
+            <span class="text-white/5">|</span>
+
+            <button (click)="categoriaActual = 'Todo'; aplicarLogicaGlobal()"
+                [ngClass]="categoriaActual === 'Todo' ? 'text-primary' : 'text-white/40'"
+                class="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors italic">Todo</button>
+            <span class="text-white/5">|</span>
+            
+            <button (click)="categoriaActual = 'Camisa'; aplicarLogicaGlobal()"
+                [ngClass]="categoriaActual === 'Camisa' ? 'text-primary' : 'text-white/40'"
+                class="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors italic">Playeras</button>
+            <span class="text-white/5">|</span>
+            
+            <button (click)="categoriaActual = 'Sudadera'; aplicarLogicaGlobal()"
+                [ngClass]="categoriaActual === 'Sudadera' ? 'text-primary' : 'text-white/40'"
+                class="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors italic">Sudaderas</button>
+        </div>
+
+        <div class="flex justify-end items-center gap-3">
+            <label class="text-[9px] font-black text-white/20 uppercase tracking-widest">Sort by:</label>
+            <select [(ngModel)]="ordenActual" (change)="aplicarLogicaGlobal()"
+                class="bg-transparent border-none text-white text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer hover:text-primary">
+                <option value="reciente" class="bg-black">Reciente</option>
+                <option value="precio-bajo" class="bg-black">Precio: Menor</option>
+                <option value="precio-alto" class="bg-black">Precio: Mayor</option>
+            </select>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
-
-        @for (product of products; track product._id) {
+        @for (product of productsPaginados; track product._id) {
         <div class="group flex flex-col">
-            <div
-                class="relative aspect-[3/4] overflow-hidden bg-neutral-900 mb-4 border border-white/5 group-hover:border-primary/50 transition-colors">
-                <img [src]="product.imagen" [alt]="product.nombre"
-                    class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-105" />
+            
+            <div (click)="abrirModal(product)" class="relative aspect-[3/4] overflow-hidden bg-neutral-900 mb-4 border border-white/5 group-hover:border-primary/50 transition-colors cursor-pointer">
+                
+                <img [src]="obtenerImagen(product.imagen)"
+                     class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 select-none pointer-events-none" />
+                
+                @if (product.stock < 10) { 
+                    <div class="absolute top-4 left-4 bg-primary text-white text-[9px] font-black px-2 py-1 uppercase italic tracking-tighter">
+                        Últimas piezas
+                    </div>
+                }
 
-                @if (product.stock < 10) { <div
-                    class="absolute top-4 left-4 bg-primary text-white text-[10px] font-black px-2 py-1 uppercase tracking-tighter">
-                    Últimas piezas
-            </div>
-            }
-        </div>
-        <div class="flex flex-col gap-1">
-            <h3
-                class="text-lg font-bold uppercase tracking-tight text-white group-hover:text-primary transition-colors">
-                {{ product.nombre }}</h3>
-            <div class="flex justify-between items-end">
-                <div class="flex flex-col">
-                    <span class="text-primary font-bold text-xl">${{ product.precio }} MXN</span>
-                    <span class="text-xs text-slate-500 uppercase font-medium">{{ product.talla }} | {{ product.color
-                        }}</span>
-                </div>
-                <button
-                    class="flex items-center justify-center bg-primary hover:bg-primary/80 text-white p-3 transition-transform active:scale-95">
-                    <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+                <button (click)="$event.stopPropagation()" class="absolute bottom-4 right-4 bg-primary text-white p-3 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                    <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
                 </button>
             </div>
+
+            <div class="flex flex-col gap-1 select-none cursor-default">
+                <h3 class="text-lg font-bold uppercase tracking-tight text-white group-hover:text-primary transition-colors italic">
+                    {{ product.nombre }}
+                </h3>
+                <div class="flex justify-between items-end">
+                    <div class="flex flex-col">
+                        <span class="text-primary font-bold text-xl tracking-tighter">${{ product.precio }} MXN</span>
+                        <span class="text-[10px] text-white/30 uppercase font-bold">{{ product.talla }} // {{ product.corte }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
+        } @empty {
+        <div class="col-span-full py-32 text-center border border-dashed border-white/5 bg-white/[0.02]">
+            <p class="text-white/20 uppercase tracking-[0.4em] font-black italic text-xs">// SISTEMA VACÍO // NO SE ENCONTRÓ EQUIPO //</p>
+        </div>
+        }
     </div>
-    } @empty {
-    <div class="col-span-full flex flex-col items-center justify-center py-20 border-2 border-dashed border-white/10">
-        <span class="material-symbols-outlined text-6xl text-slate-600 mb-4">inventory_2</span>
-        <p class="text-slate-500 uppercase tracking-widest font-bold text-center">El catálogo se está
-            actualizando.<br>Vuelve más tarde.</p>
+
+    @if (totalPaginas > 1) {
+    <div class="flex items-center justify-center mt-24 gap-6">
+        <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1"
+            class="w-12 h-12 flex items-center justify-center border border-white/10 hover:border-primary disabled:opacity-0 transition-all group">
+            <span class="material-symbols-outlined text-white/40 group-hover:text-white">chevron_left</span>
+        </button>
+
+        <div class="flex flex-col items-center gap-1">
+            <span class="text-[10px] font-black text-white tracking-widest uppercase">Página {{ paginaActual }}</span>
+            <span class="text-[8px] text-white/20 font-bold uppercase tracking-widest">de {{ totalPaginas }}</span>
+        </div>
+
+        <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas"
+            class="w-12 h-12 flex items-center justify-center border border-white/10 hover:border-primary disabled:opacity-0 transition-all group">
+            <span class="material-symbols-outlined text-white/40 group-hover:text-white">chevron_right</span>
+        </button>
     </div>
     }
 
-    </div>
+    @if (modalVisible && productoSeleccionado) {
+    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+        
+        <div class="relative w-full max-w-4xl bg-[#0a0a0a] border border-white/10 flex flex-col md:flex-row overflow-hidden shadow-2xl shadow-primary/20">
+            
+            <button (click)="cerrarModal()" class="absolute top-4 right-4 text-white/50 hover:text-white hover:rotate-90 transition-all z-20 bg-black/50 p-1 rounded-full cursor-pointer">
+                <span class="material-symbols-outlined">close</span>
+            </button>
 
-    <div class="flex items-center justify-center mt-16 gap-2">
-        <button
-            class="w-10 h-10 flex items-center justify-center border border-white/10 hover:border-primary transition-colors group">
-            <span class="material-symbols-outlined text-slate-400 group-hover:text-primary">chevron_left</span>
-        </button>
-        <button class="w-10 h-10 flex items-center justify-center bg-primary text-white text-xs font-bold">1</button>
-        <button
-            class="w-10 h-10 flex items-center justify-center border border-white/10 hover:border-primary transition-colors text-slate-400 text-xs font-bold">2</button>
-        <button
-            class="w-10 h-10 flex items-center justify-center border border-white/10 hover:border-primary transition-colors text-slate-400 text-xs font-bold">3</button>
-        <button
-            class="w-10 h-10 flex items-center justify-center border border-white/10 hover:border-primary transition-colors group">
-            <span class="material-symbols-outlined text-slate-400 group-hover:text-primary">chevron_right</span>
-        </button>
+            <div class="w-full md:w-1/2 aspect-square md:aspect-auto md:min-h-[500px] bg-neutral-900 select-none">
+                <img [src]="obtenerImagen(productoSeleccionado.imagen)" 
+                     class="w-full h-full object-cover pointer-events-none">
+            </div>
+
+            <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                
+                <div class="mb-2 flex items-center gap-2">
+                    <span class="bg-white/10 text-white text-[10px] font-black px-2 py-1 uppercase tracking-widest">{{ productoSeleccionado.tipo }}</span>
+                    @if (productoSeleccionado.stock < 10) {
+                        <span class="bg-primary/20 text-primary text-[10px] font-black px-2 py-1 uppercase tracking-widest border border-primary/50">Últimas piezas</span>
+                    }
+                </div>
+
+                <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter text-white italic mb-4 cursor-default">
+                    {{ productoSeleccionado.nombre }}
+                </h2>
+                
+                <p class="text-primary font-bold text-3xl tracking-tighter mb-6 cursor-default">
+                    ${{ productoSeleccionado.precio }} MXN
+                </p>
+
+                <p class="text-sm text-white/60 mb-8 font-light uppercase tracking-wide leading-relaxed cursor-default">
+                    {{ productoSeleccionado.descripcion }}
+                </p>
+
+                <div class="grid grid-cols-2 gap-4 mb-8 cursor-default select-none">
+                    <div class="border border-white/10 p-3 bg-white/[0.02]">
+                        <p class="text-[9px] text-white/40 font-black tracking-widest uppercase mb-1">Corte / Fit</p>
+                        <p class="text-white font-bold uppercase text-xs">{{ productoSeleccionado.corte }}</p>
+                    </div>
+                    <div class="border border-white/10 p-3 bg-white/[0.02]">
+                        <p class="text-[9px] text-white/40 font-black tracking-widest uppercase mb-1">Color</p>
+                        <p class="text-white font-bold uppercase text-xs">{{ productoSeleccionado.color }}</p>
+                    </div>
+                    <div class="col-span-2 border border-white/10 p-3 bg-white/[0.02]">
+                        <p class="text-[9px] text-white/40 font-black tracking-widest uppercase mb-1">Talla Disponible</p>
+                        <p class="text-white font-bold uppercase text-lg">{{ productoSeleccionado.talla }}</p>
+                    </div>
+                </div>
+
+                <button (click)="agregarAlCarrito(productoSeleccionado)" class="w-full bg-primary hover:bg-white hover:text-black text-white font-black uppercase tracking-[0.2em] py-5 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer outline-none">
+    <span class="material-symbols-outlined text-lg">shopping_cart_checkout</span>
+    Añadir al Arsenal
+</button>
+            </div>
+        </div>
     </div>
+    }
+
 </main>

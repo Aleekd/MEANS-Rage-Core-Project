@@ -1,91 +1,112 @@
-<main class="flex-grow max-w-7xl mx-auto w-full px-6 py-12 font-['Space_Grotesk'] text-white">
-    <div class="flex flex-col lg:flex-row gap-12">
-        <div class="flex-grow">
-            <div class="flex items-center justify-between mb-8 pb-4 border-b border-primary/10">
-                <h2 class="text-3xl font-bold uppercase tracking-tight">Tu Carrito <span class="text-primary text-lg ml-2 font-normal">[2 Items]</span></h2>
-                <a class="text-sm text-slate-400 hover:text-primary underline underline-offset-4 uppercase tracking-wider cursor-pointer">Limpiar Todo</a>
-            </div>
+<main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 select-none">
+    
+    <div class="mb-10 flex flex-col items-center text-center">
+        <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white">
+            Arsenal Activo
+        </h2>
+        <div class="h-1 w-20 bg-primary mt-4"></div>
+    </div>
 
-            <div class="flex flex-col md:flex-row gap-6 py-6 border-b border-primary/10 items-center">
-                <div class="w-full md:w-32 aspect-square bg-[#141414] rounded overflow-hidden flex-shrink-0 border border-primary/20">
-                    <img alt="Gorra Core Industrial" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=400"/>
+    @if (cartItems.length > 0) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        
+        <div class="lg:col-span-2 space-y-6">
+            @for (item of cartItems; track $index) {
+            <div class="flex flex-col sm:flex-row items-center gap-6 bg-[#0a0a0a] border border-white/5 p-4 group hover:border-white/20 transition-colors">
+                
+                <div class="w-24 h-32 shrink-0 bg-neutral-900 overflow-hidden cursor-default">
+                    <img [src]="obtenerImagen(item.producto.imagen)" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none">
                 </div>
-                <div class="flex-grow grid grid-cols-1 md:grid-cols-4 gap-4 items-center w-full">
-                    <div class="md:col-span-2">
-                        <h3 class="font-bold text-lg uppercase leading-none mb-1">Gorra Core Industrial</h3>
-                        <p class="text-slate-500 text-sm uppercase tracking-wider">Color: Negro Carbón / Talla: Única</p>
+
+                <div class="flex-grow flex flex-col justify-between h-full cursor-default">
+                    <div>
+                        <h3 class="text-lg font-black uppercase tracking-tight text-white italic">{{ item.producto.nombre }}</h3>
+                        <p class="text-[10px] text-white/40 uppercase font-bold tracking-widest mt-1">TALLA: {{ item.talla }} | COLOR: {{ item.color }}</p>
                     </div>
-                    <div class="flex items-center justify-center md:justify-start">
-                        <div class="flex items-center border border-primary/30 rounded">
-                            <button class="px-3 py-1 hover:bg-primary/20 transition-colors"><span class="material-symbols-outlined text-sm">remove</span></button>
-                            <span class="px-4 py-1 font-bold">1</span>
-                            <button class="px-3 py-1 hover:bg-primary/20 transition-colors"><span class="material-symbols-outlined text-sm">add</span></button>
+                    <div class="mt-4 flex items-center gap-6">
+                        <div class="flex items-center border border-white/10 bg-black">
+                            <button (click)="actualizarCantidad($index, -1)" class="w-8 h-8 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/5 transition-colors cursor-pointer outline-none">-</button>
+                            <span class="w-8 text-center text-xs font-bold text-white">{{ item.cantidad }}</span>
+                            <button (click)="actualizarCantidad($index, 1)" class="w-8 h-8 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/5 transition-colors cursor-pointer outline-none">+</button>
                         </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xl font-bold tracking-tighter text-primary">$25.00</p>
-                        <button class="text-xs text-slate-500 hover:text-primary uppercase mt-2">Eliminar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-col md:flex-row gap-6 py-6 border-b border-primary/10 items-center">
-                <div class="w-full md:w-32 aspect-square bg-[#141414] rounded overflow-hidden flex-shrink-0 border border-primary/20">
-                    <img alt="Camiseta Rage Oversized" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=400"/>
-                </div>
-                <div class="flex-grow grid grid-cols-1 md:grid-cols-4 gap-4 items-center w-full">
-                    <div class="md:col-span-2">
-                        <h3 class="font-bold text-lg uppercase leading-none mb-1">Camiseta Rage Oversized</h3>
-                        <p class="text-slate-500 text-sm uppercase tracking-wider">Color: Deep Red / Talla: L</p>
-                    </div>
-                    <div class="flex items-center justify-center md:justify-start">
-                        <div class="flex items-center border border-primary/30 rounded">
-                            <button class="px-3 py-1 hover:bg-primary/20 transition-colors"><span class="material-symbols-outlined text-sm">remove</span></button>
-                            <span class="px-4 py-1 font-bold">2</span>
-                            <button class="px-3 py-1 hover:bg-primary/20 transition-colors"><span class="material-symbols-outlined text-sm">add</span></button>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xl font-bold tracking-tighter text-primary">$90.00</p>
-                        <p class="text-[10px] text-slate-500">$45.00 c/u</p>
-                        <button class="text-xs text-slate-500 hover:text-primary uppercase mt-1">Eliminar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <aside class="w-full lg:w-96">
-            <div class="bg-primary/5 border border-primary/20 rounded-xl p-8 sticky top-32">
-                <h3 class="text-xl font-bold uppercase tracking-widest mb-6 pb-4 border-b border-primary/20">Resumen</h3>
-                <div class="space-y-4 mb-8">
-                    <div class="flex justify-between text-sm uppercase tracking-wider text-slate-400">
-                        <span>Subtotal</span>
-                        <span class="text-slate-100">$115.00</span>
-                    </div>
-                    <div class="flex justify-between text-sm uppercase tracking-wider text-slate-400">
-                        <span>Envío</span>
-                        <span class="text-slate-100">$12.00</span>
-                    </div>
-                    <div class="pt-4 border-t border-primary/20 flex justify-between items-end">
-                        <span class="font-bold uppercase tracking-tighter text-lg">Total</span>
-                        <span class="text-3xl font-bold text-primary tracking-tighter">$127.00</span>
-                    </div>
-                </div>
-
-                <div class="mb-8">
-                    <label class="block text-[10px] uppercase font-bold tracking-widest mb-2 text-slate-400">Cupón de Descuento</label>
-                    <div class="flex gap-2">
-                        <input class="bg-black border border-primary/30 rounded px-4 py-3 text-sm focus:outline-none focus:border-primary w-full uppercase placeholder:text-slate-700 text-white" placeholder="APLICAR CÓDIGO" type="text"/>
-                        <button class="bg-primary hover:bg-red-700 text-white font-bold px-4 rounded transition-colors flex items-center justify-center">
-                            <span class="material-symbols-outlined">chevron_right</span>
+                        <button (click)="eliminarItem($index)" class="text-[10px] uppercase font-black tracking-widest text-white/30 hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1 outline-none">
+                            <span class="material-symbols-outlined text-[14px]">delete</span> Quitar
                         </button>
                     </div>
                 </div>
 
-                <button class="w-full bg-primary hover:bg-red-700 text-white py-5 rounded-lg font-black uppercase tracking-[0.2em] transition-all transform active:scale-[0.98] shadow-[0_0_20px_rgba(230,0,0,0.3)]">
+                <div class="text-right flex flex-col justify-center shrink-0 cursor-default">
+                    <span class="text-primary font-black text-xl tracking-tighter">${{ item.producto.precio * item.cantidad }}</span>
+                    <span class="text-[9px] text-white/30 uppercase tracking-widest">MXN</span>
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="bg-[#0a0a0a] border border-white/10 p-8 sticky top-24">
+                <h3 class="text-xl font-black uppercase tracking-tighter text-white border-b border-white/10 pb-4 mb-6">Resumen de Orden</h3>
+                
+                <div class="mb-8">
+                    <label class="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] mb-2 block">Código de Descuento</label>
+                    <div class="flex gap-2">
+                        <input type="text" [(ngModel)]="codigoCupon" 
+                            class="flex-grow bg-black border border-white/10 p-3 text-xs font-bold text-white uppercase outline-none focus:border-primary transition-all"
+                            placeholder="INGRESAR CÓDIGO">
+                        <button (click)="aplicarCupon()" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white text-[10px] font-black uppercase px-4 transition-all cursor-pointer">
+                            Aplicar
+                        </button>
+                    </div>
+                    @if (mensajeCupon) {
+                        <p class="text-[9px] font-bold uppercase mt-2 italic tracking-widest" 
+                           [ngClass]="errorCupon ? 'text-primary' : 'text-green-500'">
+                           // {{ mensajeCupon }}
+                        </p>
+                    }
+                </div>
+
+                <div class="space-y-4 mb-8 text-sm font-bold uppercase tracking-widest cursor-default">
+                    <div class="flex justify-between text-white/60">
+                        <span>Subtotal</span>
+                        <span>${{ total }} MXN</span>
+                    </div>
+                    
+                    @if (cuponAplicado) {
+                        <div class="flex justify-between text-green-500 animate-pulse">
+                            <span>Descuento ({{ descuentoPorcentaje }}%)</span>
+                            <span>-${{ (total * descuentoPorcentaje / 100) }} MXN</span>
+                        </div>
+                    }
+
+                    <div class="flex justify-between text-white/60">
+                        <span>Envío</span>
+                        <span>Calculado en Checkout</span>
+                    </div>
+                    
+                    <div class="flex justify-between text-white text-xl tracking-tighter pt-4 border-t border-white/10 mt-4">
+                        <span>Total Final</span>
+                        <span class="text-primary">${{ cuponAplicado ? totalConDescuento : total }} MXN</span>
+                    </div>
+                </div>
+
+                <button (click)="procederAlPago()" class="w-full bg-primary hover:bg-white hover:text-black text-white font-black uppercase tracking-[0.2em] py-5 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer outline-none">
+                    <span class="material-symbols-outlined text-lg">lock</span>
                     Proceder al Pago
                 </button>
+
+                <p class="text-center text-[9px] text-white/30 uppercase tracking-widest mt-6 cursor-default">
+                    Pagos seguros encriptados de extremo a extremo.
+                </p>
             </div>
-        </aside>
+        </div>
     </div>
+    } @else {
+    <div class="py-32 text-center border border-dashed border-white/5 bg-white/[0.02]">
+        <span class="material-symbols-outlined text-4xl text-white/20 mb-4 block">shopping_cart</span>
+        <p class="text-white/40 uppercase tracking-[0.3em] font-black italic text-sm mb-6">Tu arsenal está vacío.</p>
+        <button [routerLink]="['/catalogo']" class="bg-transparent border border-primary text-primary hover:bg-primary hover:text-white text-xs font-black uppercase tracking-widest px-8 py-3 transition-colors cursor-pointer outline-none">
+            Explorar Catálogo
+        </button>
+    </div>
+    }
 </main>

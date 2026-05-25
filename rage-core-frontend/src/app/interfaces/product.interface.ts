@@ -5,6 +5,8 @@ export interface Product {
     precio: number;
     stock: number;
     imagen: string;
+    tipo: string;
+    corte: string;
     talla: string;
     color: string;
     categoria?: string;

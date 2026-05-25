@@ -1,9 +1,9 @@
-<section class="relative h-[60vh] w-full overflow-hidden bg-black mb-12">
+<section class="relative h-[60vh] w-full overflow-hidden bg-black mb-12 select-none">
   <div class="absolute inset-0 bg-cover bg-center opacity-60" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2070');"></div>
-  <div class="relative flex h-full flex-col items-center justify-center text-center px-4">
+  <div class="relative flex h-full flex-col items-center justify-center text-center px-4 cursor-default">
     <h2 class="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase">Nueva Colección</h2>
     <p class="text-lg md:text-xl font-light text-slate-300 mb-8 uppercase tracking-widest">Desata tu estilo.</p>
-    <button class="bg-primary px-8 py-3 text-white font-bold uppercase hover:scale-105 transition-transform">Comprar Ahora</button>
+    <button class="bg-primary px-8 py-3 text-white font-bold uppercase hover:scale-105 transition-transform outline-none cursor-pointer">Comprar Ahora</button>
   </div>
 </section>
 
@@ -11,27 +11,91 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
     @for (product of products; track product._id) {
       <div class="group flex flex-col gap-4">
-        <div class="relative aspect-[3/4] overflow-hidden bg-neutral-900 border border-white/5 group-hover:border-primary/50 transition-colors">
-          <img [src]="product.imagen" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-          <button class="absolute bottom-4 right-4 bg-primary text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-            <span class="material-symbols-outlined">add_shopping_cart</span>
-          </button>
+        
+        <div (click)="abrirModal(product)" class="relative aspect-[3/4] overflow-hidden bg-neutral-900 border border-white/5 group-hover:border-primary/50 transition-colors cursor-pointer">
+          <img [src]="obtenerImagen(product.imagen)" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 select-none pointer-events-none">
+          
+          <button (click)="agregarAlCarrito(productoSeleccionado)" class="w-full bg-primary hover:bg-white hover:text-black text-white font-black uppercase tracking-[0.2em] py-5 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer outline-none">
+    <span class="material-symbols-outlined text-lg">shopping_cart_checkout</span>
+    Añadir al Arsenal
+</button>
         </div>
-        <div>
+        
+        <div class="select-none cursor-default">
           <h3 class="text-lg font-bold text-white uppercase">{{product.nombre}}</h3>
           <p class="text-primary font-bold">${{product.precio}} MXN</p>
         </div>
+        
       </div>
     } @empty {
-      <div class="col-span-full text-center py-20 border-2 border-dashed border-white/10">
+      <div class="col-span-full text-center py-20 border-2 border-dashed border-white/10 select-none cursor-default">
         <p class="text-slate-500 uppercase tracking-[0.2em] font-bold">No hay equipo disponible en este momento.</p>
       </div>
     }
   </div>
 </main>
 
-<section class="bg-primary py-10 mt-20">
+<section class="bg-primary py-10 mt-20 select-none cursor-default">
   <div class="flex justify-around text-black font-black italic text-2xl md:text-4xl overflow-hidden whitespace-nowrap">
     <span>STREET CULTURE • RAGE CORE • HIGH ATTITUDE • EST. 2024 • STREET CULTURE • RAGE CORE</span>
   </div>
 </section>
+
+@if (modalVisible && productoSeleccionado) {
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+    
+    <div class="relative w-full max-w-4xl bg-[#0a0a0a] border border-white/10 flex flex-col md:flex-row overflow-hidden shadow-2xl shadow-primary/20">
+        
+        <button (click)="cerrarModal()" class="absolute top-4 right-4 text-white/50 hover:text-white hover:rotate-90 transition-all z-20 bg-black/50 p-1 rounded-full cursor-pointer">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <div class="w-full md:w-1/2 aspect-square md:aspect-auto md:min-h-[500px] bg-neutral-900 select-none">
+            <img [src]="obtenerImagen(productoSeleccionado.imagen)" 
+                 class="w-full h-full object-cover pointer-events-none">
+        </div>
+
+        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+            
+            <div class="mb-2 flex items-center gap-2">
+                <span class="bg-white/10 text-white text-[10px] font-black px-2 py-1 uppercase tracking-widest">{{ productoSeleccionado.tipo }}</span>
+                @if (productoSeleccionado.stock < 10) {
+                    <span class="bg-primary/20 text-primary text-[10px] font-black px-2 py-1 uppercase tracking-widest border border-primary/50">Últimas piezas</span>
+                }
+            </div>
+
+            <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tighter text-white italic mb-4 cursor-default">
+                {{ productoSeleccionado.nombre }}
+            </h2>
+            
+            <p class="text-primary font-bold text-3xl tracking-tighter mb-6 cursor-default">
+                ${{ productoSeleccionado.precio }} MXN
+            </p>
+
+            <p class="text-sm text-white/60 mb-8 font-light uppercase tracking-wide leading-relaxed cursor-default">
+                {{ productoSeleccionado.descripcion }}
+            </p>
+
+            <div class="grid grid-cols-2 gap-4 mb-8 cursor-default select-none">
+                <div class="border border-white/10 p-3 bg-white/[0.02]">
+                    <p class="text-[9px] text-white/40 font-black tracking-widest uppercase mb-1">Corte / Fit</p>
+                    <p class="text-white font-bold uppercase text-xs">{{ productoSeleccionado.corte }}</p>
+                </div>
+                <div class="border border-white/10 p-3 bg-white/[0.02]">
+                    <p class="text-[9px] text-white/40 font-black tracking-widest uppercase mb-1">Color</p>
+                    <p class="text-white font-bold uppercase text-xs">{{ productoSeleccionado.color }}</p>
+                </div>
+                <div class="col-span-2 border border-white/10 p-3 bg-white/[0.02]">
+                    <p class="text-[9px] text-white/40 font-black tracking-widest uppercase mb-1">Talla Disponible</p>
+                    <p class="text-white font-bold uppercase text-lg">{{ productoSeleccionado.talla }}</p>
+                </div>
+            </div>
+
+            <button class="w-full bg-primary hover:bg-white hover:text-black text-white font-black uppercase tracking-[0.2em] py-5 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer outline-none">
+                <span class="material-symbols-outlined text-lg">shopping_cart_checkout</span>
+                Añadir al Arsenal
+            </button>
+        </div>
+    </div>
+</div>
+}
